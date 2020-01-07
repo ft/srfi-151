@@ -140,7 +140,7 @@
 (define-inlinable (get-bit x)
   (if (boolean? x)
       (if x 1 0)
-      x))
+      (bitwise-and 1 x)))
 
 (define-public (bitwise-unfold stop? mapper successor seed)
   (let loop ((acc 0) (bit 0) (state seed))
