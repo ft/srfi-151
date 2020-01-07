@@ -105,18 +105,22 @@
 
 ;; Bits Conversion
 
-(define-public bits->list srfi60:integer->list)
+(define-public (bits->list . args)
+  (reverse (apply srfi60:integer->list args)))
+
 (define-public bits->vector
   (case-lambda
     ((x) (list->vector (bits->list x)))
     ((x len) (list->vector (bits->list x len)))))
 
-(define-public list->bits srfi60:list->integer)
+(define-public (list->bits lst)
+  (srfi60:list->integer (reverse lst)))
+
 (define-public (vector->bits v)
   (list->bits (vector->list v)))
 
 (define-public (bits . lst)
-  (list->bits (reverse lst)))
+  (list->bits lst))
 
 ;; Fold, Unfold, and Generate
 
