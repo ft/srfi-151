@@ -130,3 +130,23 @@
         seed
         (loop (1- count-down) (arithmetic-shift rest -1)
               (proc (not (zero? (bitwise-and rest 1))) seed)))))
+
+(define-public (bitwise-for-each proc x)
+  (let loop ((x x) (n (integer-length x)))
+    (when (not (zero? n))
+      (proc (= 1 (logand 1 x)))
+      (loop (arithmetic-shift x -1) (1- x)))))
+
+(define-inlinable (get-bit x)
+  (if (boolean? x)
+      (if x 1 0)
+      x))
+
+(define-public (bitwise-unfold stop? mapper successor seed)
+  (let loop ((acc 0) (bit 0) (state seed))
+    (cond ((stop? state) acc)
+          (else (loop (logior acc
+                              (arithmetic-shift (get-bit (mapper bit))
+                                                bit))
+                      (1+ bit)
+                      (successor state))))))
