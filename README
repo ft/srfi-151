@@ -44,6 +44,11 @@ covers a number  of SRFI 151's features,  as well as the  R6RS bitwise li-
 brary, which covers even more.
 
 
+Installation
+
+    # make install        (as root)
+
+
 Test Suite
 
 The implementation  is accompanied by  a test-suite. Running  it, requires
