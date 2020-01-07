@@ -49,7 +49,22 @@ Test Suite
 The implementation  is accompanied by  a test-suite. Running  it, requires
 the following dependency to be available on the host system:
 
-    https://github.com/ft/scm-test-tap
+    - https://github.com/ft/scm-test-tap
+    - Perl's ‘prove’: A TAP test suite harness
+
+To run, either use the ‘test’ or ‘test-verbose’ targets from the Makefile:
+
+% make test
+prove --merge --color -e './tools/run-single-test' ./test/*.t
+./test/basic-operations-scm.t ....... ok
+./test/bit-field-operations-scm.t ... ok
+./test/bits-conversion-scm.t ........ ok
+./test/fold-unfold-generate-scm.t ... ok
+./test/integer-operations-scm.t ..... ok
+./test/single-bit-operations-scm.t .. ok
+All tests successful.
+Files=6, Tests=105,  0 wallclock secs ( 0.02 usr 0.00 sys + 0.25 cusr 0.02 csys =  0.29 CPU)
+Result: PASS
 
 
 Copyright
