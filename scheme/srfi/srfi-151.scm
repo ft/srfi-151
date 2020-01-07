@@ -145,8 +145,8 @@
 (define-public (bitwise-unfold stop? mapper successor seed)
   (let loop ((acc 0) (bit 0) (state seed))
     (cond ((stop? state) acc)
-          (else (loop (logior acc
-                              (arithmetic-shift (get-bit (mapper bit))
-                                                bit))
+          (else (loop (bitwise-ior acc
+                                   (arithmetic-shift (get-bit (mapper bit))
+                                                     bit))
                       (1+ bit)
                       (successor state))))))
