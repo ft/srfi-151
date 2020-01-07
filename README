@@ -67,6 +67,18 @@ Files=6, Tests=105,  0 wallclock secs ( 0.02 usr 0.00 sys + 0.25 cusr 0.02 csys 
 Result: PASS
 
 
+Notes
+
+The SRFI-151 spec defines ‘bit-count’ (which this module implements), that
+redefines a function defined in Guile's core:
+
+ Scheme Procedure: bit-count bool bitvector
+     Return a count of how many entries in BITVECTOR are equal to BOOL.
+     For example: (bit-count #f #*000111000) => 6
+
+If the function's use is desired, use a prefix when importing this module.
+
+
 Copyright
 
 The project's copyright terms can be found in the LICENCE file.
