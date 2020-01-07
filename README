@@ -1,0 +1,57 @@
+SRFI-151 — Bitwise Operations — Implementation for GNU Guile
+
+Reference:
+
+    https://srfi.schemers.org/srfi-151/srfi-151.html
+
+
+Abstract — from the reference document
+
+This SRFI proposes a coherent and comprehensive set of procedures for per-
+forming bitwise logical operations on integers; it is accompanied by a re-
+ference implementation of the spec in terms  of a set of seven core opera-
+tors. The  sample implementation  is portable,  as efficient  as practical
+with pure Scheme arithmetic (it is much more efficient to replace the core
+operators with C or assembly language if possible), and open source.
+
+The precise semantics of these operators  is almost never an issue. A con-
+sistent, portable  set of  names and  parameter conventions,  however, is.
+Hence this SRFI, which  is based mainly on SRFI 33,  with some changes and
+additions from Olin's late revisions to  SRFI 33 (which were never consum-
+mated). SRFI 60 (based on SLIB) is smaller but has a few procedures of its
+own; some of its procedures have  both native (often Common Lisp) and SRFI
+33 names. They have been incorporated into  this SRFI. R6RS is a subset of
+SRFI 60, except  that all procedure names begin with  a bitwise- prefix. A
+few procedures have been added from the general vector SRFI 133.
+
+Among the  applications of  bitwise operations are:  hashing, Galois-field
+calculations of  error-detecting and error-correcting  codes, cryptography
+and ciphers, pseudo-random  number generation, register-transfer-level mo-
+deling of digital logic designs,  Fast-Fourier transforms, packing and un-
+packing numbers  in persistent data structures,  space-filling curves with
+applications to dimension reduction  and sparse multi-dimensional database
+indexes,  and  generating approximate  seed  values  for root-finders  and
+transcendental function algorithms.
+
+
+Implementation
+
+The implementation is contained in  the ‘scheme’ subdirectory. It attempts
+to re-use  existing features in  Guile (some  of which are  implemented as
+primitives for performance), in order to avoid code duplication. In parti-
+cular, Guile  has an implementation of  SRFI 60 (Integers as  Bits), which
+covers a number  of SRFI 151's features,  as well as the  R6RS bitwise li-
+brary, which covers even more.
+
+
+Test Suite
+
+The implementation  is accompanied by  a test-suite. Running  it, requires
+the following dependency to be available on the host system:
+
+    https://github.com/ft/scm-test-tap
+
+
+Copyright
+
+The project's copyright terms can be found in the LICENCE file.
