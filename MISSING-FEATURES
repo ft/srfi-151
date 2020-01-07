@@ -3,4 +3,4 @@ based ‘make-bitwise-generator’, since Guile is currently missing an implemen
 tation of that particular srfi.
 
 See <https://www.mail-archive.com/guile-devel@gnu.org/msg14950.html> and the
-short thread is starts for details.
+short thread it starts for details.
