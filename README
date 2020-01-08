@@ -73,7 +73,7 @@ prove --merge --color -e './tools/run-single-test' ./test/*.t
 ./test/integer-operations-scm.t ..... ok
 ./test/single-bit-operations-scm.t .. ok
 All tests successful.
-Files=6, Tests=105,  0 wallclock secs ( 0.02 usr 0.00 sys + 0.25 cusr 0.02 csys =  0.29 CPU)
+Files=6, Tests=110,  0 wallclock secs ( 0.02 usr  0.00 sys +  0.26 cusr  0.01 csys =  0.29 CPU)
 Result: PASS
 
 
