@@ -38,7 +38,7 @@
   '(((args #t #f #t #f #t #t #t)       (result . #b001110101))
     ((args #f #f #t #f #t #f #t #t #t) (result . #b111010100))))
 
-(with-test-bundle (srfi-151 single-bit)
+(with-test-bundle (srfi-151 bits-conversation)
   (plan (apply + (map length (list *b2l-tests*
                                    *b2v-tests*
                                    *l2b-tests*

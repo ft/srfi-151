@@ -57,7 +57,7 @@
     ((int . #x140000000000000000000000000000000)
      (start . 0) (end . 129) (result . 5))))
 
-(with-test-bundle (srfi-151 single-bit)
+(with-test-bundle (srfi-151 bit-field)
   (plan (+ (apply + (map length (list *field-tests*
                                       *any-tests*
                                       *replace-tests*

@@ -4,7 +4,7 @@
              (test tap)
              (ice-9 format))
 
-(with-test-bundle (srfi-151 single-bit)
+(with-test-bundle (srfi-151 fold/unfold/generate)
   (plan 3)
 
   (define-test "(bitwise-fold cons '() #b1010111) => (#t #f #t #f #t #t #t)"
