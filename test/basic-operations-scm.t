@@ -1,7 +1,8 @@
 ;; -*- scheme -*-
 
 (use-modules (srfi srfi-151)
-             (test tap))
+             (test tap)
+             (ice-9 match))
 
 (define (title/binary n a b r)
   (format #f "(~a ~a ~a) => ~a" n a b r))
@@ -51,23 +52,20 @@
 
 (with-test-bundle (srfi-151 basic)
   (plan (+ (apply + (map length (list *not-tests*
-                                    *log-tests*)))
+                                      *log-tests*)))
            5))
 
   (for-each-test (*not-tests* => this)
-    (let ((v (assq-ref this 'value))
-          (r (assq-ref this 'result)))
-      (define-test (title/not v r)
-        (pass-if-= (bitwise-not v) r))))
+    (match this
+      ((('value . v) ('result . r))
+       (define-test (title/not v r)
+         (pass-if-= (bitwise-not v) r)))))
 
   (for-each-test (*log-tests* => this)
-    (let ((n (assq-ref this 'name))
-          (p (assq-ref this 'proc))
-          (a (assq-ref this 'a))
-          (b (assq-ref this 'b))
-          (r (assq-ref this 'result)))
-      (define-test (title/binary n a b r)
-        (pass-if-= (p a b) r))))
+    (match this
+      ((('name . n) ('proc . p) ('a . a) ('b . b) ('result . r))
+       (define-test (title/binary n a b r)
+         (pass-if-= (p a b) r)))))
 
   (define-test "(bitwise-eqv) => -1"
     (pass-if-= (bitwise-eqv) -1))

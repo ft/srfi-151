@@ -2,7 +2,8 @@
 
 (use-modules (srfi srfi-151)
              (test tap)
-             (ice-9 format))
+             (ice-9 format)
+             (ice-9 match))
 
 (define (title/bit-field a b c r)
   (format #f "(bit-field #x~x ~a ~a) => #x~x" a b c r))
@@ -66,20 +67,16 @@
            3))
 
   (for-each-test (*field-tests* => this)
-    (let ((int (assq-ref this 'int))
-          (s (assq-ref this 'start))
-          (e (assq-ref this 'end))
-          (r (assq-ref this 'result)))
-      (define-test (title/bit-field int s e r)
-        (pass-if-= (bit-field int s e) r))))
+    (match this
+      ((('int . int) ('start . s) ('end . e) ('result . r))
+       (define-test (title/bit-field int s e r)
+         (pass-if-= (bit-field int s e) r)))))
 
   (for-each-test (*any-tests* => this)
-    (let ((int (assq-ref this 'int))
-          (s (assq-ref this 'start))
-          (e (assq-ref this 'end))
-          (r (assq-ref this 'result)))
-      (define-test (title/bit-field-any? int s e r)
-        (pass-if-equal? (bit-field-any? int s e) r))))
+    (match this
+      ((('int . int) ('start . s) ('end . e) ('result . r))
+       (define-test (title/bit-field-any? int s e r)
+         (pass-if-equal? (bit-field-any? int s e) r)))))
 
   (define-test "(bit-field-clear #b101010 1 4) => #b100000"
     (pass-if-= (bit-field-clear #b101010 1 4) #b100000))
@@ -87,30 +84,22 @@
     (pass-if-= (bit-field-set #b101010 1 4) #b101110))
 
   (for-each-test (*replace-tests* => this)
-    (let ((dst (assq-ref this 'dst))
-          (src (assq-ref this 'src))
-          (s (assq-ref this 'start))
-          (e (assq-ref this 'end))
-          (r (assq-ref this 'result)))
-      (define-test (title/replace dst src s e r)
-        (pass-if-= (bit-field-replace dst src s e) r))))
+    (match this
+      ((('dst . dst) ('src . src) ('start . s) ('end . e) ('result . r))
+       (define-test (title/replace dst src s e r)
+         (pass-if-= (bit-field-replace dst src s e) r)))))
 
   (define-test "(bit-field-replace-same #b1111 #b0000 1 3) => #b1001"
     (pass-if-= (bit-field-replace-same #b1111 #b0000 1 3) #b1001))
 
   (for-each-test (*rotate-tests* => this)
-    (let ((int (assq-ref this 'int))
-          (count (assq-ref this 'count))
-          (s (assq-ref this 'start))
-          (e (assq-ref this 'end))
-          (r (assq-ref this 'result)))
-      (define-test (title/rotate int count s e r)
-        (pass-if-= (bit-field-rotate int count s e) r))))
+    (match this
+      ((('int . int) ('count . count) ('start . s) ('end . e) ('result . r))
+       (define-test (title/rotate int count s e r)
+         (pass-if-= (bit-field-rotate int count s e) r)))))
 
   (for-each-test (*reverse-tests* => this)
-    (let ((int (assq-ref this 'int))
-          (s (assq-ref this 'start))
-          (e (assq-ref this 'end))
-          (r (assq-ref this 'result)))
-      (define-test (title/reverse int s e r)
-        (pass-if-= (bit-field-reverse int s e) r)))))
+    (match this
+      ((('int . int) ('start . s) ('end . e) ('result . r))
+       (define-test (title/reverse int s e r)
+         (pass-if-= (bit-field-reverse int s e) r))))))

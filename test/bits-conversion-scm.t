@@ -2,7 +2,8 @@
 
 (use-modules (srfi srfi-151)
              (test tap)
-             (ice-9 format))
+             (ice-9 format)
+             (ice-9 match))
 
 (define (title/apply proc args r)
   (if (integer? r)
@@ -46,31 +47,31 @@
                                    *bits-tests*))))
 
   (for-each-test (*b2l-tests* => this)
-    (let ((args (assq-ref this 'args))
-          (r (assq-ref this 'result)))
-      (define-test (title/apply 'bits->list args r)
-        (pass-if-equal? (apply bits->list args) r))))
+    (match this
+      ((('args . args) ('result . r))
+       (define-test (title/apply 'bits->list args r)
+         (pass-if-equal? (apply bits->list args) r)))))
 
   (for-each-test (*b2v-tests* => this)
-    (let ((args (assq-ref this 'args))
-          (r (assq-ref this 'result)))
-      (define-test (title/apply 'bits->vector args r)
-        (pass-if-equal? (apply bits->vector args) r))))
+    (match this
+      ((('args . args) ('result . r))
+       (define-test (title/apply 'bits->vector args r)
+         (pass-if-equal? (apply bits->vector args) r)))))
 
   (for-each-test (*l2b-tests* => this)
-    (let ((args (assq-ref this 'args))
-          (r (assq-ref this 'result)))
-      (define-test (title/x2b 'list->bits args r)
-        (pass-if-equal? (list->bits args) r))))
+    (match this
+      ((('args . args) ('result . r))
+       (define-test (title/x2b 'list->bits args r)
+         (pass-if-equal? (list->bits args) r)))))
 
   (for-each-test (*v2b-tests* => this)
-    (let ((args (assq-ref this 'args))
-          (r (assq-ref this 'result)))
-      (define-test (title/x2b 'vector->bits args r)
-        (pass-if-equal? (vector->bits args) r))))
+    (match this
+      ((('args . args) ('result . r))
+       (define-test (title/x2b 'vector->bits args r)
+         (pass-if-equal? (vector->bits args) r)))))
 
   (for-each-test (*bits-tests* => this)
-    (let ((args (assq-ref this 'args))
-          (r (assq-ref this 'result)))
-      (define-test (title/apply 'bits args r)
-        (pass-if-equal? (apply bits args) r)))))
+    (match this
+      ((('args . args) ('result . r))
+       (define-test (title/apply 'bits args r)
+         (pass-if-equal? (apply bits args) r))))))

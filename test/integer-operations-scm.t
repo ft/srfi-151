@@ -1,7 +1,8 @@
 ;; -*- scheme -*-
 
 (use-modules (srfi srfi-151)
-             (test tap))
+             (test tap)
+             (ice-9 match))
 
 (define (title/shift v s r)
   (format #f "(arithmetic-shift ~a ~a) => ~a" v s r))
@@ -72,29 +73,28 @@
                                    *bitwise-if-tests*))))
 
   (for-each-test (*shift-tests* => this)
-    (let ((v (assq-ref this 'value))
-          (s (assq-ref this 'shift))
-          (r (assq-ref this 'result)))
-      (define-test (title/shift v s r)
-        (pass-if-= (arithmetic-shift v s) r))))
+    (match this
+      ((('value . v) ('shift . s) ('result . r))
+       (define-test (title/shift v s r)
+         (pass-if-= (arithmetic-shift v s) r)))))
 
   (for-each-test (*bit-count-tests* => this)
-    (let ((v (assq-ref this 'value))
-          (r (assq-ref this 'result))
-          (c (assq-ref this 'comment)))
-      (define-test (title/count v r c)
-        (pass-if-= (bit-count v) r))))
+    (match this
+      ((('value . v) ('result . r) ('comment . c))
+       (define-test (title/count v r c)
+         (pass-if-= (bit-count v) r)))
+      ((('value . v) ('result . r))
+       (define-test (title/count v r #f)
+         (pass-if-= (bit-count v) r)))))
 
   (for-each-test (*integer-length-tests* => this)
-    (let ((v (assq-ref this 'value))
-          (r (assq-ref this 'result)))
-      (define-test (title/length v r)
-        (pass-if-= (integer-length v) r))))
+    (match this
+      ((('value . v) ('result . r))
+       (define-test (title/length v r)
+         (pass-if-= (integer-length v) r)))))
 
   (for-each-test (*bitwise-if-tests* => this)
-    (let ((m (assq-ref this 'mask))
-          (a (assq-ref this 'n0))
-          (b (assq-ref this 'n1))
-          (r (assq-ref this 'result)))
-      (define-test (title/bw-if m a b r)
-        (pass-if-= (bitwise-if m a b) r)))))
+    (match this
+      ((('mask . m) ('n0 . n0) ('n1 . n1) ('result . r))
+       (define-test (title/bw-if m n0 n1 r)
+         (pass-if-= (bitwise-if m n0 n1) r))))))

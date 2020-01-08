@@ -2,7 +2,8 @@
 
 (use-modules (srfi srfi-151)
              (test tap)
-             (ice-9 format))
+             (ice-9 format)
+             (ice-9 match))
 
 (define (title/binary n a b r)
   (format #f "(~a ~a ~a) => ~a" n a b r))
@@ -62,39 +63,34 @@
            1))
 
   (for-each-test (*set-tests* => this)
-    (let ((a (assq-ref this 'a))
-          (b (assq-ref this 'b))
-          (r (assq-ref this 'result)))
-      (define-test (title/set? a b r)
-        (pass-if-equal? (bit-set? a b) r))))
+    (match this
+      ((('a . a) ('b . b) ('result . r))
+       (define-test (title/set? a b r)
+         (pass-if-equal? (bit-set? a b) r)))))
 
   (for-each-test (*copy-tests* => this)
-    (let ((idx (assq-ref this 'index))
-          (int (assq-ref this 'int))
-          (bool (assq-ref this 'bool))
-          (r (assq-ref this 'result)))
-      (define-test (title/copy idx int bool r)
-        (pass-if-= (copy-bit idx int bool) r))))
+    (match this
+      ((('index . idx) ('int . int) ('bool . bool) ('result . r))
+       (define-test (title/copy idx int bool r)
+         (pass-if-= (copy-bit idx int bool) r)))))
 
   (define-test "(bit-swap 0 2 4) => #b1"
     (pass-if-= (bit-swap 0 2 4) #b1))
 
   (for-each-test (*any-tests* => this)
-    (let ((mask (assq-ref this 'mask))
-          (int (assq-ref this 'int))
-          (r (assq-ref this 'result)))
-      (define-test (title/binary 'any-bit-set? mask int r)
-        (pass-if-equal? (any-bit-set? mask int) r))))
+    (match this
+      ((('mask . mask) ('int . int) ('result . r))
+       (define-test (title/binary 'any-bit-set? mask int r)
+         (pass-if-equal? (any-bit-set? mask int) r)))))
 
   (for-each-test (*every-tests* => this)
-    (let ((mask (assq-ref this 'mask))
-          (int (assq-ref this 'int))
-          (r (assq-ref this 'result)))
-      (define-test (title/binary 'every-bit-set? mask int r)
-        (pass-if-equal? (every-bit-set? mask int) r))))
+    (match this
+      ((('mask . mask) ('int . int) ('result . r))
+       (define-test (title/binary 'every-bit-set? mask int r)
+         (pass-if-equal? (every-bit-set? mask int) r)))))
 
   (for-each-test (*first-tests* => this)
-    (let ((int (assq-ref this 'int))
-          (r (assq-ref this 'result)))
-      (define-test (title/unary 'first-set-bit int r)
-        (pass-if-equal? (first-set-bit int) r)))))
+    (match this
+      ((('int . int) ('result . r))
+       (define-test (title/unary 'first-set-bit int r)
+         (pass-if-equal? (first-set-bit int) r))))))
