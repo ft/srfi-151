@@ -13,6 +13,17 @@
 
 (define-public bitwise-eqv
   (case-lambda
+    "Produces the complement of the bitwise-xor procedure.
+
+When applied to three (or more) arguments, it does not produce a 1 bit
+everywhere that a, b and c all agree! For three arguments, it
+produces (bitwise-eqv a (bitwise-eqv b c)) or the equivalent
+(bitwise-eqv (bitwise-eqv a b) c):
+
+  (bitwise-eqv 37 12 52) => 29
+
+With no arguments it returns -1, with one argument it returns that argument
+unchanged."
     (() -1)
     ((a) a)
     ((a b) (bitwise-not (bitwise-xor a b)))

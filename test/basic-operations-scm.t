@@ -50,8 +50,9 @@
                        (a . 11) (b . 26) (result . -17))))
 
 (with-test-bundle (srfi-151 basic)
-  (plan (apply + (map length (list *not-tests*
-                                   *log-tests*))))
+  (plan (+ (apply + (map length (list *not-tests*
+                                    *log-tests*)))
+           5))
 
   (for-each-test (*not-tests* => this)
     (let ((v (assq-ref this 'value))
@@ -66,4 +67,24 @@
           (b (assq-ref this 'b))
           (r (assq-ref this 'result)))
       (define-test (title/binary n a b r)
-        (pass-if-= (p a b) r)))))
+        (pass-if-= (p a b) r))))
+
+  (define-test "(bitwise-eqv) => -1"
+    (pass-if-= (bitwise-eqv) -1))
+  (define-test "(bitwise-eqv 123) => 123"
+    (pass-if-= (bitwise-eqv 123) 123))
+  (define-test "(bitwise-eqv 37 12 52) == (bitwise-eqv (bitwise-eqv 37 12) 52)"
+    (pass-if-= (bitwise-eqv 37 12 52)
+               (bitwise-eqv (bitwise-eqv 37 12) 52)))
+  (define-test "(bitwise-eqv 37 12 52) == (bitwise-eqv 37 (bitwise-eqv 12 52))"
+    (pass-if-= (bitwise-eqv 37 12 52)
+               (bitwise-eqv 37 (bitwise-eqv 12 52))))
+  (define-test "(bitwise-eqv 37 12 52) != (bitwise-ior ...)"
+    (let ((a 37)
+          (b 12)
+          (c 52))
+      (pass-if-not-= (bitwise-eqv a b c)
+                     (bitwise-ior (bitwise-and a b c)
+                                  (bitwise-and (bitwise-not a)
+                                               (bitwise-not b)
+                                               (bitwise-not c)))))))
