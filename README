@@ -88,6 +88,13 @@ redefines a function defined in Guile's core:
 
 If the function's use is desired, use a prefix when importing this module.
 
+Also, at this point, the module implements all of SRFI-151, except for the
+srfi-121 based ‘make-bitwise-generator’, since  Guile is currently missing
+an implementation of that particular srfi.
+
+See <https://www.mail-archive.com/guile-devel@gnu.org/msg14950.html> and the
+short thread it starts for details.
+
 
 Copyright
 
