@@ -250,3 +250,16 @@ successor to the current state, and repeat this algorithm.
                                                      bit))
                       (1+ bit)
                       (successor state))))))
+
+(define-public (make-bitwise-generator value)
+  "Returns generator (in terms of SRFI 121) that generates all the bits of
+value starting with the least significant bit.
+
+A generator is just a procedure that will produce a new value each time it
+is called.
+
+Note that the generator is infinite."
+  (lambda ()
+    (let ((least-significant-bit (bit-set? 0 value)))
+      (set! value (arithmetic-shift value -1))
+      least-significant-bit)))

@@ -5,7 +5,7 @@
              (ice-9 format))
 
 (with-test-bundle (srfi-151 fold/unfold/generate)
-  (plan 3)
+  (plan (+ 3 5))
 
   (define-test "(bitwise-fold cons '() #b1010111) => (#t #f #t #f #t #t #t)"
     (pass-if-equal? (bitwise-fold cons '() #b1010111)
@@ -21,4 +21,13 @@
                                even?
                                (lambda (i) (+ i 1))
                                0)
-               #b101010101)))
+               #b101010101))
+  (let* ((value #b110)
+         (g (make-bitwise-generator value))
+         (expect (bits->list value 5)))
+    (let loop ((rest expect) (i 0))
+      (when (not (null? rest))
+        (let ((this (car rest)))
+          (define-test (format #f "Call no.~a to (g) returns ~a" i this)
+            (pass-if-eqv? this (g)))
+          (loop (cdr rest) (1+ i)))))))
