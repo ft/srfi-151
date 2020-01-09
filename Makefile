@@ -6,7 +6,7 @@ GUILE_BINARY ?= guile
 GUILE_CALL = $(GUILE_BINARY) -L $(LOAD_PATH) -C $(LOAD_PATH) --no-auto-compile
 GUILD_BINARY ?= guild
 
-CFLAGS = -Wunsupported-warning -Wunused-variable -Wunused-toplevel
+CFLAGS = -O3 -Wunsupported-warning -Wunused-variable -Wunused-toplevel
 CFLAGS += -Wunbound-variable -Warity-mismatch -Wduplicate-case-datum
 CFLAGS += -Wbad-case-datum -Wformat -L$(LOAD_PATH)
 
