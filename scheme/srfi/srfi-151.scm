@@ -29,13 +29,13 @@ unchanged."
     ((a b) (bitwise-not (bitwise-xor a b)))
     ((a b . rest) (apply bitwise-eqv (cons (bitwise-eqv a b) rest)))))
 
-(define-public (bitwise-nand . lst)
+(define-public (bitwise-nand a b)
   "Produce inverted result of bitwise-and."
-  (bitwise-not (apply bitwise-and lst)))
+  (bitwise-not (bitwise-and a b)))
 
-(define-public (bitwise-nor . lst)
+(define-public (bitwise-nor a b)
   "Produce inverted result of bitwise-or."
-  (bitwise-not (apply bitwise-ior lst)))
+  (bitwise-not (bitwise-ior a b)))
 
 (define (complement-a fnc a b)
   (fnc (bitwise-not a) b))
