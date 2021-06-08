@@ -1,117 +1,167 @@
+#!guile \
+--no-auto-compile
+-s
+!#
+
 ;; -*- scheme -*-
 
-(use-modules (ice-9 ftw)
-             (ice-9 optargs)
-             (srfi srfi-1))
+(define *package* "guile-srfi-151")
+(define *manifest* `((module "scheme" "srfi/srfi-151.scm")))
 
-;; Set this to #t to disable and actual file-system changes!
-(define install-debug #f)
+(use-modules (ice-9 match)
+             (ice-9 optargs))
 
-(define (file-exists? name)
-  "Return #t if a file (of any kind) named NAME exist."
-  (access? name F_OK))
+(define (make-default . lst)
+  (let ((value lst))
+    (case-lambda
+      (() (string-concatenate (map (lambda (obj)
+                                     (if (procedure? obj) (obj) obj))
+                                   value)))
+      (l (set! value l)))))
 
-(define (is-directory? dir)
-  "Return #t if an existing file named DIR is a directory."
-  (eq? 'directory
-       (stat:type (stat dir))))
+(define *destdir*       (make-default ""))
+(define *package-name*  (make-default *package*))
+(define *prefix*        (make-default "/usr/local"))
+(define *bindir*        (make-default *prefix* "/bin"))
+(define *libdir*        (make-default *prefix* "/lib"))
+(define *datarootdir*   (make-default *prefix* "/share"))
+(define *guile-version* (make-default (effective-version)))
+(define *infodir*       (make-default *datarootdir* "/info"))
+(define *mandir*        (make-default *datarootdir* "/man"))
+(define *docdir*        (make-default *datarootdir* "/doc/" *package-name*))
+(define *moduledir*     (make-default *datarootdir* "/guile/site/" *guile-version*))
+(define *objectdir*     (make-default *libdir* "/guile/" *guile-version* "/site-ccache"))
+(define dryrun? #f)
 
-(define (split-file-name name)
-  "Split a file name in to a list:
+(define (maybe-variable str modify!)
+  (lambda (s)
+    (let* ((pf (string-append str "="))
+           (n (string-length pf)))
+      (if (string-prefix? pf s)
+          (begin (modify! (substring s n))
+                 #t)
+          #f))))
 
-  (split-file-name \"/foo/bar/baz\") => (\"foo\" \"bar\" \"baz\")"
-  (filter (lambda (x) (not (or (string=? x ".")
-                               (string=? x ""))))
-          (string-split name #\/)))
+(define-syntax-rule (cmdline-variable str sym)
+  (maybe-variable str (lambda (s) (sym s))))
 
-(define (ensure-directory dir mode)
-  "Make sure a directory named DIR exists.
+(define (usage)
+  (format #t "
+usage: install [OPTION(s)...] [PARAMETER(s)...]
 
-If directories need to be created for that to be true, use MODE as the access
-mode for these new directories. Should any part of the directory be an existing
-file that is not a directory, the procedure errors out."
-  (fold (lambda (x acc)
-          (let ((cur (string-concatenate (list acc "/" x))))
-            (cond ((not (file-exists? cur))
-                   (if install-debug
-                       (format #t "  ..mkdir ~o ~s~%" mode cur)
-                       (mkdir cur mode)))
-                  ((not (is-directory? cur))
-                   (error "File exists, but is not a directory: ~s~%" cur))
-                  (else #f))
-            cur))
-        ""
-        (split-file-name dir)))
+Options:
 
-(define* (install-file src dest
-                       #:key
-                       (destination-directory (%site-dir))
-                       (file-mode #o644)
-                       (directory-mode #o755))
-  "Install SRC as DEST into DESTINATION-DIRECTORY with mode FILE-MODE.
+  --help, -h       Display this help text.
+  --dry-run, -d    Run, but don't modify the file system.
 
-Should any directories need to be created for performing the file-copy, the
-mode for these directories will be DIRECTORY-MODE. FILE-MODE, DIRECTORY-MODE
-and DESTINATION-DIRECTORY are keyword-arguments with these respective default
-values: #o644, #o755 and the return-value of (%site-dir)."
-  (let* ((destfile (string-concatenate (list destination-directory "/" dest)))
-         (full-dest-dir (dirname destfile)))
-    (unless (and (file-exists? full-dest-dir)
-                 (is-directory? full-dest-dir))
-      (if install-debug
-          (format #t "mkdir -p ~s~%" full-dest-dir))
-      (ensure-directory full-dest-dir directory-mode))
-    (format #t "cp ~s ~s~%" src destfile)
-    (unless install-debug
-      (copy-file src destfile))
-    (format #t "chmod ~o ~s~%" file-mode destfile)
-    (unless install-debug
-      (chmod destfile file-mode))))
+Parameters:
 
-(define (install-scheme src dest)
-  "Handle installation of the scheme subdirectory.
+  DESTDIR
+  PREFIX
+  PACKAGE
+  BINDIR
+  LIBDIR
+  DOCDIR
+  MANDIR
+  INFODIR
+  DATAROOTDIR
+  GUILE_VERSION
+  MODULEDIR
+  OBJECTDIR
 
-*.scm goes to (%site-dir) and *.go goes to (%site-ccache-dir) while
-maintaining the relative sub-directory structure."
-  (cond ((string-suffix? ".go" src 0)
-         (install-file src dest #:destination-directory (%site-ccache-dir)))
-        ((string-suffix? ".scm" src 0)
-         (install-file src dest))
-        (else #f)))
+")
+  (quit 0))
 
-(define (strip-root fname)
-  "Remove the root-directory part of a file name FNAME. This also cleans up
-occurances of \"./\" or multiple slashes in the file name:
+(define cmdline-processors
+  (list (lambda (s)
+          (if (or (string= s "--help")
+                  (string= s "-h"))
+              (usage)
+              #f))
+        (lambda (s)
+          (if (or (string= s "--dry-run")
+                  (string= s "-d"))
+              (begin (set! dryrun? #t)
+                     #t)
+              #f))
+        (cmdline-variable "DESTDIR"       *destdir*)
+        (cmdline-variable "PREFIX"        *prefix*)
+        (cmdline-variable "PACKAGE"       *package-name*)
+        (cmdline-variable "BINDIR"        *bindir*)
+        (cmdline-variable "LIBDIR"        *libdir*)
+        (cmdline-variable "INFODIR"       *infodir*)
+        (cmdline-variable "MANDIR"        *mandir*)
+        (cmdline-variable "DOCDIR"        *docdir*)
+        (cmdline-variable "DATAROOTDIR"   *datarootdir*)
+        (cmdline-variable "GUILE_VERSION" *guile-version*)
+        (cmdline-variable "MODULEDIR"     *moduledir*)
+        (cmdline-variable "OBJECTDIR"     *objectdir*)))
 
-  foo/bar/baz    => bar/baz
-  ./foo/bar/baz  => bar/baz
-  ../foo/bar/baz => foo/bar/baz
-  foo//bar/baz   => bar/baz
-  foo/./bar/baz  => bar/baz"
-  (let* ((lst (split-file-name fname)))
-    (string-join (cdr lst) "/")))
+(define (cmdline-process lst)
+  (for-each (lambda (str)
+              (let loop ((rest cmdline-processors))
+                (unless (null? rest)
+                  (unless ((car rest) str)
+                    (loop (cdr rest))))))
+            lst))
 
-(define* (foreach-file-in dir proc #:key (exclude '()))
-  "Run a procedure PROC for each regular file in a directory named DIR.
+(cmdline-process (cdr (command-line)))
 
-PROC is called with two arguments: The file name and the file name with its
-root part stripped of. For example, if DIR is \"foo\" a call of PROC may look
-like this:
+(define (dir? d)
+  (and (file-exists? d)
+       (file-is-directory? d)))
 
-  (PROC \"foo/bar/baz\" \"bar/baz\")"
-  (define (nop name stat result) 0)
-  (file-system-fold (lambda (name stat result) ;; enter?
-                      (not (member (basename name) exclude)))
-                    (lambda (name stat result) ;; leaf
-                      (when (eq? (stat:type stat) 'regular)
-                        (proc name (strip-root name)))
-                      0)
-                    nop nop nop  ;; down, up and skip
-                    (lambda (name stat errno result)
-                      (format #t "warning: ~s: ~a~%" name (strerror errno))
-                      0)
-                    0
-                    dir))
+(define (system! . cmd)
+  (let ((rc (apply system* cmd)))
+    (unless (zero? rc)
+      (format #t "System command failed. ~a~%" cmd)
+      (format #t "Giving up!~%")
+      (quit 1))))
 
-(foreach-file-in "scheme" install-scheme
-                 #:exclude '(".git" "test" "tools"))
+(define (file-is-executable? f)
+  (let* ((info (stat f))
+         (permissions (stat:perms info))
+         (exec-bits #o111))
+    (not (zero? (logand exec-bits permissions)))))
+
+(define (install-normal-file f d)
+  (when (file-exists? f)
+    (let* ((dd (string-append (*destdir*) d))
+           (final (string-append dd "/" (basename f))))
+      (unless (dir? dd)
+        (unless dryrun?
+          (system! "mkdir" "-p" dd)
+          (system! "chmod" "0755" dd)))
+      (format #t "Installing: ~a~%" final)
+      (unless dryrun?
+        (system! "cp" f final)
+        (let ((mode (if (file-is-executable? f)
+                        "0755" "0644")))
+          (system! "chmod" mode final))))))
+
+(define* (install-with-prefix source-dir source-file destination-generate
+                              #:optional prefix)
+  (let ((destination (if prefix
+                         (string-append (destination-generate) "/" prefix)
+                         (destination-generate))))
+    (install-normal-file (string-append source-dir "/" source-file)
+                         destination)))
+
+(define (install m)
+  (match m
+    (('program dir file)       (install-with-prefix dir file *bindir*))
+    (('documentation file)     (install-normal-file file (*docdir*)))
+    (('documentation dir file) (install-with-prefix dir file *docdir*))
+    (('infopage dir file)      (install-with-prefix dir file *infodir*))
+    (('manpage section dir file)
+     (let ((src (string-append dir "/" file))
+           (dest (string-append (*mandir*) "/man" (number->string section))))
+       (install-normal-file src dest)))
+    (('module dir file)
+     (let* ((module-prefix (dirname file))
+            (module-name (basename file ".scm"))
+            (object-file (string-append module-prefix "/" module-name ".go")))
+       (install-with-prefix dir file        *moduledir* module-prefix)
+       (install-with-prefix dir object-file *objectdir* module-prefix)))))
+
+(for-each install *manifest*)
