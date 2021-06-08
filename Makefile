@@ -18,6 +18,8 @@ TESTS = $(TOPDIR)/test/*.t
 RUNTESTS = $(TOPDIR)/tools/run-single-test
 PROVE = tap-harness -e '$(RUNTESTS)'
 INSTALL = $(GUILE_CALL) $(TOPDIR)/tools/install
+DESTDIR =
+PREFIX = /usr/local
 
 .SUFFIXES: .scm .go
 
@@ -44,7 +46,7 @@ clean:
 	find . -name "*~" -exec rm -f '{}' +
 
 install:
-	$(INSTALL)
+	$(INSTALL) DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)"
 
 test:
 	$(PROVE) $(TESTS)
