@@ -65,16 +65,23 @@ the following dependency to be available on the host system:
 To run, either use the ‘test’ or ‘test-verbose’ targets from the Makefile:
 
 % make test
-prove --merge --color -e './tools/run-single-test' ./test/*.t
-./test/basic-operations-scm.t ....... ok
-./test/bit-field-operations-scm.t ... ok
-./test/bits-conversion-scm.t ........ ok
-./test/fold-unfold-generate-scm.t ... ok
-./test/integer-operations-scm.t ..... ok
-./test/single-bit-operations-scm.t .. ok
-All tests successful.
-Files=6, Tests=110,  0 wallclock secs ( 0.02 usr  0.00 sys +  0.26 cusr  0.01 csys =  0.29 CPU)
-Result: PASS
+tap-harness -e './tools/run-single-test' ./test/*.t
+./test/basic-operations-scm.t .................... ok
+./test/bit-field-operations-scm.t ................ ok
+./test/bits-conversion-scm.t ..................... ok
+./test/fold-unfold-generate-scm.t ................ ok
+WARNING: (guile-user): imported module (srfi srfi-151) overrides core binding `bit-count'
+./test/integer-operations-scm.t .................. ok
+./test/single-bit-operations-scm.t ............... ok
+
+Processed 6 test bundles:
+  • 6 of 6 bundles passed.
+
+Processed 115 tests:
+  • 115 of 115 tests passed.
+  • 0 of 115 tests failed.
+
+Test Result: PASS
 
 
 Notes

@@ -16,7 +16,7 @@ OBJECTS = ${MODULES:.scm=.go}
 
 TESTS = $(TOPDIR)/test/*.t
 RUNTESTS = $(TOPDIR)/tools/run-single-test
-PROVE = prove --merge --color -e '$(RUNTESTS)'
+PROVE = tap-harness -e '$(RUNTESTS)'
 INSTALL = $(GUILE_CALL) $(TOPDIR)/tools/install
 
 .SUFFIXES: .scm .go
