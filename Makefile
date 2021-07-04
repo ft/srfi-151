@@ -1,7 +1,8 @@
+PROJECT = guile-srfi-151
 TOPDIR = .
-
 LOAD_PATH = $(TOPDIR)/scheme
 TEST_PATH = $(TOPDIR)/test
+
 GUILE_BINARY ?= guile
 GUILE_CALL = $(GUILE_BINARY) -L $(LOAD_PATH) -C $(LOAD_PATH) --no-auto-compile
 GUILD_BINARY ?= guild
@@ -17,9 +18,11 @@ OBJECTS = ${MODULES:.scm=.go}
 TESTS = $(TOPDIR)/test/*.t
 RUNTESTS = $(TOPDIR)/tools/run-single-test
 PROVE = tap-harness -e '$(RUNTESTS)'
-INSTALL = $(GUILE_CALL) $(TOPDIR)/tools/install
+
+INSTALL = $(GUILE_CALL) --no-auto-compile $(TOPDIR)/tools/install
 DESTDIR =
 PREFIX = /usr/local
+DOCDIR = $(PREFIX)/share/doc/$(PROJECT)
 
 .SUFFIXES: .scm .go
 
@@ -46,7 +49,7 @@ clean:
 	find . -name "*~" -exec rm -f '{}' +
 
 install:
-	$(INSTALL) DESTDIR="$(DESTDIR)" PREFIX="$(PREFIX)"
+	$(INSTALL) DESTDIR="$(DESTDIR)" DOCDIR="$(DOCDIR)" PREFIX="$(PREFIX)"
 
 test:
 	$(PROVE) $(TESTS)
