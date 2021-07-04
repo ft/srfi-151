@@ -1,0 +1,23 @@
+----------------------------------------
+ User-visible changes in guile-srfi-151
+----------------------------------------
+
+* scratch → v0.1.0 (released 2021-07-04):
+
+** Diffstat
+
+    .gitignore                       |   6 +
+    LICENCE                          |  22 +++
+    Makefile                         |  60 +++++++
+    README                           | 101 ++++++++++++
+    scheme/srfi/srfi-151.scm         | 265 +++++++++++++++++++++++++++++++
+    test/basic-operations-scm.t      |  88 ++++++++++
+    test/bit-field-operations-scm.t  | 105 ++++++++++++
+    test/bits-conversion-scm.t       |  77 +++++++++
+    test/fold-unfold-generate-scm.t  |  33 ++++
+    test/integer-operations-scm.t    |  89 +++++++++++
+    test/single-bit-operations-scm.t |  96 +++++++++++
+    tools/guile-in-here              |  18 +++
+    tools/install                    | 192 ++++++++++++++++++++++
+    tools/run-single-test            |  12 ++
+    14 files changed, 1164 insertions(+)
